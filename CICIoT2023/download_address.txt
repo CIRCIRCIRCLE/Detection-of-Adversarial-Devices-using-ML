@@ -1,0 +1,4 @@
+Download the dataset from this address:
+http://205.174.165.80/IOTDataset/CIC_IOT_Dataset2023/Dataset/CSV/
+
+It will contain 169 .csv files.
