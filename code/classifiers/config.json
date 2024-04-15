@@ -1,0 +1,10 @@
+{
+    "classifier_type": "LSTM",
+    "gpu": "2",
+    "encoding_dim": 36,
+    "dataset_path": "../../dataset/filtered_df.csv",
+    "AEEpochs": 2,
+    "ClassifierEpochs": 2,
+    "batch_size": 128
+  }
+  
