@@ -2,9 +2,10 @@ import numpy as np
 import pandas as pd
 import os
 from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Input, Dense, Conv1D, MaxPooling1D, Flatten, Dropout, LSTM
+from tensorflow.keras.layers import Input, Dense, Conv1D, MaxPooling1D, Flatten, Dropout, LSTM, TimeDistributed
+from tensorflow.keras.layers import Reshape, Lambda
 from tensorflow.keras import regularizers
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, f1_score, precision_score, recall_score
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.metrics import classification_report
@@ -35,7 +36,6 @@ def setup_logging():
     logging.getLogger('').addHandler(console)
 
 def setup_gpu(gpu_num="0"):
-    '''
     gpus = tf.config.experimental.list_physical_devices('GPU')
     if gpus:
         try:
@@ -48,9 +48,8 @@ def setup_gpu(gpu_num="0"):
             logging.error(f"Failed to set up GPU due to: {e}")
     else:
         # No GPU available, use the CPU
-'''
-    logging.info("No GPU found, using the CPU instead.")
-    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # This disables all GPUs
+        logging.info("No GPU found, using the CPU instead.")
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # This disables all GPUs
 
 
 
@@ -86,7 +85,7 @@ def build_autoencoder(input_dim, encoding_dim):
     Adjust the encoder by adding L1 regularization to encourage sparsity:
     '''
     input_layer = Input(shape=(input_dim,))
-    encoded = Dense(encoding_dim, activation='relu', activity_regularizer=regularizers.l1(10e-5))(input_layer)
+    encoded = Dense(encoding_dim, activation='relu', activity_regularizer=regularizers.l2(10e-6))(input_layer)
     decoded = Dense(input_dim, activation='sigmoid')(encoded)
     autoencoder = Model(input_layer, decoded)
     encoder = Model(input_layer, encoded)
@@ -156,6 +155,53 @@ def LSTM_classifier(X_train, y_train, encoding_dim, label_encoder, epochs, batch
 
     return classifier
 
+def CNN_LSTM_classifier(X_train, y_train, encoding_dim, label_encoder, epochs, batch_size):
+    model = Sequential()
+    # Define the input shape for the TimeDistributed layer
+    input_shape = (None, X_train.shape[2], 1)  # 'None' for variable number of timesteps
+
+    # add CNN layers
+    model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu'), input_shape=input_shape))
+    model.add(TimeDistributed(MaxPooling1D(pool_size=2)))
+    model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu')))
+    model.add(TimeDistributed(MaxPooling1D(pool_size=2)))
+    model.add(TimeDistributed(Flatten()))
+
+    # add LSTM layers
+    model.add(LSTM(32, return_sequences=True))
+    model.add(Dropout(0.2))
+    model.add(LSTM(16))
+    model.add(Dropout(0.2))
+
+    # Output layer
+    model.add(Dense(len(label_encoder.classes_), activation='softmax'))
+
+    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    model.summary()
+    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.05)
+
+    return model
+
+def LSTM_CNN_classifier(X_train, y_train, encoding_dim, label_encoder, epochs, batch_size):
+    # LSTM expects input of shape (samples, time steps, features)
+    # reshape in the calling function to (None, 1, encoding_dim)
+    model = Sequential([
+        LSTM(50, return_sequences=True, input_shape=(encoding_dim, 1)),  # LSTM layer
+        Dropout(0.2),
+        Conv1D(64, kernel_size=3, activation='relu'),
+        MaxPooling1D(pool_size=2),
+        Flatten(),
+        Dense(64, activation='relu'),
+        Dropout(0.5),
+        Dense(len(label_encoder.classes_), activation='softmax')
+    ])
+
+    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    model.summary()
+    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.05)
+
+    return model
+
 def evaluate_classifier(classifier, X_test_encoded, y_test):
     '''
     6. evaluate the performance of classifier
@@ -169,15 +215,20 @@ def visualize_confusion_matrix(y_true, y_pred, classes):
     This function computes and plots a confusion matrix.
     `y_true` are the actual labels, `y_pred` are the model's predictions, and `classes` are the label encoder classes.
     """
-    cm = confusion_matrix(y_true, y_pred)
-    df_cm = pd.DataFrame(cm, index=classes, columns=classes)
     
-    plt.figure(figsize=(10, 7))
-    sns.heatmap(df_cm, annot=True, fmt='g', cmap='Blues')  # 'g' format to avoid scientific notation
+    cm = confusion_matrix(y_true, y_pred)
+    logging.info("Confusion Matrix:\n%s", cm)
+    
+    df_cm = pd.DataFrame(cm, index=classes, columns=classes)
+
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(df_cm, annot=True, fmt='g', cmap = 'Blues')  
     plt.title('Confusion Matrix')
     plt.ylabel('Actual')
     plt.xlabel('Predicted')
-    plt.show()
+    plt.savefig('ConfusionMatrix.png')
+
+ 
 
 def main():
     setup_logging()
@@ -222,6 +273,15 @@ def main():
         X_train_encoded = X_train_encoded.reshape((X_train_encoded.shape[0], 1, X_train_encoded.shape[1]))
         X_test_encoded = X_test_encoded.reshape((X_test_encoded.shape[0], 1, X_test_encoded.shape[1]))
         classifier = LSTM_classifier(X_train_encoded, y_train, encoding_dim, label_encoder, epochs, batch_size)
+    elif classifier_type == "CNN_LSTM":
+        X_train_encoded = X_train_encoded.reshape((X_train_encoded.shape[0], 1, X_train_encoded.shape[1], 1))
+        X_test_encoded = X_test_encoded.reshape((X_test_encoded.shape[0], 1, X_test_encoded.shape[1], 1))
+        classifier = CNN_LSTM_classifier(X_train_encoded, y_train, X_train_encoded.shape[1], label_encoder, epochs, batch_size)
+    elif classifier_type == "LSTM_CNN":
+        # Reshape data for LSTM_CNN
+        X_train_encoded = X_train_encoded.reshape((X_train_encoded.shape[0], X_train_encoded.shape[1], 1))
+        X_test_encoded = X_test_encoded.reshape((X_test_encoded.shape[0], X_test_encoded.shape[1], 1))
+        classifier = LSTM_CNN_classifier(X_train_encoded, y_train, X_train_encoded.shape[1], label_encoder, epochs, batch_size)
     else:
         # Default to a basic dense network classifier
         classifier = build_and_train_classifier(X_train_encoded, y_train, encoding_dim, label_encoder, epochs, batch_size)
@@ -231,22 +291,16 @@ def main():
 
     report = classification_report(y_test, y_pred_classes, target_names=label_encoder.classes_)
     logging.info(f"Choosed Classifier:{classifier_type}  Selected Features: {encoding_dim}")
-    logging.info("Classification report:\n%s", report)
+    logging.info("Classification report:\n%s", report)    
+    
+    accuracy = accuracy_score(y_test, y_pred_classes)
+    precision = precision_score(y_test, y_pred_classes, average='macro')
+    recall = recall_score(y_test, y_pred_classes, average='macro')
+    f1 = f1_score(y_test, y_pred_classes, average='macro')
+    logging.info(f'Accuracy: {accuracy}, Precision: {precision}, Recall: {recall}, F1 Score: {f1}')
 
     visualize_confusion_matrix(y_test, y_pred_classes, label_encoder.classes_)
 
 
 if __name__ == "__main__":
     main()
-
-'''
-Additional Features to Consider
-Configuration File: Use a configuration file (e.g., JSON, YAML) to manage paths, model parameters, and other settings. This makes your script easier to adapt and use across different environments without modifying the code.
-
-Logging: Integrate logging instead of print statements for better tracking of the pipeline's execution and easier debugging.
-
-Cross-validation: Implement cross-validation instead of a simple train-test split to ensure your model's robustness and generalizability.
-
-Model Saving: Include functionality to save trained models, allowing you to reload and use them without retraining for further analysis or deployment.
-
-'''

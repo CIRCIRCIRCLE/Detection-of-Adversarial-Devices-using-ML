@@ -1,0 +1,79 @@
+2024-04-15 21:44:34,576 - INFO - Starting the application.
+2024-04-15 21:44:34,697 - INFO - GPU is successfully loaded on GPU: 2
+2024-04-15 21:44:34,697 - INFO - Configurations are set
+2024-04-15 21:44:49,332 - INFO - Data loaded and preprocessed successfully.
+2024-04-15 21:47:57,454 - INFO - Fold 1 - Accuracy: 0.985771921708093, Precision: 0.9431514102007397, Recall: 0.9054024851622622, F1 Score: 0.9162864348577034
+2024-04-15 21:50:51,922 - INFO - Fold 2 - Accuracy: 0.9865446744720995, Precision: 0.9411127578312801, Recall: 0.9079165411753808, F1 Score: 0.9180764765250051
+2024-04-15 21:53:45,761 - INFO - Fold 3 - Accuracy: 0.9854152128401954, Precision: 0.9382078479587479, Recall: 0.9076985757498572, F1 Score: 0.9170891947234526
+2024-04-15 21:57:01,254 - INFO - Fold 4 - Accuracy: 0.9852859838205268, Precision: 0.9424037881312508, Recall: 0.9072143458738932, F1 Score: 0.917559552937834
+2024-04-15 21:59:43,333 - INFO - Fold 5 - Accuracy: 0.9858416686051019, Precision: 0.9420319525802909, Recall: 0.9081139559845903, F1 Score: 0.9183587960735148
+2024-04-15 21:59:43,335 - INFO - Fold 1 Results: Accuracy=0.99, Precision=0.94, Recall=0.91, F1 Score=0.92
+2024-04-15 21:59:43,335 - INFO - Fold 2 Results: Accuracy=0.99, Precision=0.94, Recall=0.91, F1 Score=0.92
+2024-04-15 21:59:43,335 - INFO - Fold 3 Results: Accuracy=0.99, Precision=0.94, Recall=0.91, F1 Score=0.92
+2024-04-15 21:59:43,336 - INFO - Fold 4 Results: Accuracy=0.99, Precision=0.94, Recall=0.91, F1 Score=0.92
+2024-04-15 21:59:43,336 - INFO - Fold 5 Results: Accuracy=0.99, Precision=0.94, Recall=0.91, F1 Score=0.92
+2024-04-15 21:59:43,337 - INFO - Classification Report for Fold 1:
+              precision    recall  f1-score   support
+
+           0       0.84      0.97      0.90     18815
+           1       1.00      1.00      1.00    175474
+           2       0.99      1.00      1.00    138932
+           3       1.00      0.99      1.00     45272
+           4       0.89      0.57      0.69      8418
+
+    accuracy                           0.99    386911
+   macro avg       0.94      0.91      0.92    386911
+weighted avg       0.99      0.99      0.98    386911
+
+2024-04-15 21:59:43,337 - INFO - Classification Report for Fold 2:
+              precision    recall  f1-score   support
+
+           0       0.84      0.96      0.90     19067
+           1       1.00      1.00      1.00    175406
+           2       1.00      1.00      1.00    138489
+           3       1.00      1.00      1.00     45575
+           4       0.87      0.59      0.70      8373
+
+    accuracy                           0.99    386910
+   macro avg       0.94      0.91      0.92    386910
+weighted avg       0.99      0.99      0.99    386910
+
+2024-04-15 21:59:43,338 - INFO - Classification Report for Fold 3:
+              precision    recall  f1-score   support
+
+           0       0.84      0.96      0.89     18796
+           1       1.00      1.00      1.00    174839
+           2       1.00      0.99      1.00    139748
+           3       1.00      0.99      1.00     45132
+           4       0.86      0.59      0.70      8395
+
+    accuracy                           0.99    386910
+   macro avg       0.94      0.91      0.92    386910
+weighted avg       0.99      0.99      0.98    386910
+
+2024-04-15 21:59:43,338 - INFO - Classification Report for Fold 4:
+              precision    recall  f1-score   support
+
+           0       0.84      0.97      0.90     18814
+           1       1.00      1.00      1.00    175624
+           2       0.99      0.99      0.99    138742
+           3       1.00      0.99      1.00     45333
+           4       0.89      0.58      0.70      8397
+
+    accuracy                           0.99    386910
+   macro avg       0.94      0.91      0.92    386910
+weighted avg       0.99      0.99      0.98    386910
+
+2024-04-15 21:59:43,338 - INFO - Classification Report for Fold 5:
+              precision    recall  f1-score   support
+
+           0       0.84      0.97      0.90     19094
+           1       1.00      0.99      1.00    175186
+           2       0.99      1.00      1.00    138954
+           3       1.00      1.00      1.00     45272
+           4       0.88      0.59      0.70      8404
+
+    accuracy                           0.99    386910
+   macro avg       0.94      0.91      0.92    386910
+weighted avg       0.99      0.99      0.99    386910
+
