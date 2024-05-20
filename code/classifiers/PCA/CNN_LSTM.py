@@ -12,7 +12,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout, Conv1D, MaxPooling1D, Flatten
 from tensorflow.keras.optimizers import Adam
 
-# GPU configuration (Optional)
+# GPU configuration
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
     try:
@@ -26,11 +26,11 @@ print('-------------------------------------')
 
 # Set up paths (assumes the same directory structure as your provided code)
 current_directory  = os.path.dirname(__file__)
-dataset_path = os.path.join(current_directory, '..', '..', 'dataset')
-model_path = os.path.join(current_directory, 'model', 'CNN_LSTM_model.h5')
+dataset_path = os.path.join(current_directory, '..', '..', '..', 'datasets')
+model_path = os.path.join(current_directory,'..', 'model', 'CNN_LSTM.h5')
 
 # Load and preprocess data
-df = pd.read_csv(os.path.join(dataset_path, 'filtered_df.csv'))
+df = pd.read_csv(os.path.join(dataset_path, 'IIoT_formatted.csv'))
 
 '''
 def preprocess_data(df):
@@ -56,7 +56,7 @@ def preprocess_data(df):
 
     return X_train, X_test, y_train, y_test, label_encoder.classes_
 '''
-def preprocess_data(df, n_components=0.8):
+def preprocess_data(df, n_components=0.95):
     X = df.drop(columns=['label'])
     y = df['label']
 
@@ -65,8 +65,24 @@ def preprocess_data(df, n_components=0.8):
         if X[column].dtype == bool:
             X[column] = X[column].astype(int)
 
+    # Check for infinite values
+    '''
+    Identify Columns with Infinite Values ->Replace Infinite Values -> Handle NaN Values -> Data Scaling
+    '''
+    inf_columns = X.columns.to_series()[np.isinf(X).any()]
+    print("Columns with infinite values:", inf_columns)
+
+    # Replace inf and -inf with NaN across the DataFrame
+    X.replace([np.inf, -np.inf], np.nan, inplace=True)
+    # Fill NaN values with the mean of each column
+    for column in X.select_dtypes(include=[np.number]).columns:
+        X[column] = X[column].fillna(X[column].mean())
+
+
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
+
+    
 
     # Applying PCA
     pca = PCA(n_components=n_components)
@@ -128,5 +144,5 @@ sns.heatmap(cm, annot=True, fmt='d', ax=ax, cmap='Blues',
 plt.title('Confusion Matrix')
 plt.ylabel('Actual Labels')
 plt.xlabel('Predicted Labels')
-plt.savefig('CMCNN.png')
+plt.savefig('CMcl.png')
 plt.show()

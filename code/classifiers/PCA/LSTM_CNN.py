@@ -20,17 +20,17 @@ if gpus:
             tf.config.experimental.set_memory_growth(gpu, True)
     except RuntimeError as e:
         print(e)
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 print('GPU is successfully loaded')
 print('-------------------------------------')
 
 # Set up paths (assumes the same directory structure as your provided code)
 current_directory  = os.path.dirname(__file__)
-dataset_path = os.path.join(current_directory, '..', '..', 'dataset')
-model_path = os.path.join(current_directory, 'model', 'CNN_LSTM_model.h5')
+dataset_path = os.path.join(current_directory, '..', '..', '..', 'datasets')
+model_path = os.path.join(current_directory, '..', 'model', 'LSTM_CNN.h5')
 
 # Load and preprocess data
-df = pd.read_csv(os.path.join(dataset_path, 'filtered_df.csv'))
+df = pd.read_csv(os.path.join(dataset_path, 'IIoT_formatted.csv'))
 
 '''
 def preprocess_data(df):
@@ -65,6 +65,20 @@ def preprocess_data(df, n_components=0.95):
         if X[column].dtype == bool:
             X[column] = X[column].astype(int)
 
+    # Check for infinite values
+    '''
+    Identify Columns with Infinite Values ->Replace Infinite Values -> Handle NaN Values -> Data Scaling
+    '''
+    inf_columns = X.columns.to_series()[np.isinf(X).any()]
+    print("Columns with infinite values:", inf_columns)
+
+    # Replace inf and -inf with NaN across the DataFrame
+    X.replace([np.inf, -np.inf], np.nan, inplace=True)
+    # Fill NaN values with the mean of each column
+    for column in X.select_dtypes(include=[np.number]).columns:
+        X[column] = X[column].fillna(X[column].mean())
+
+    # Data Scaling
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 

@@ -6,7 +6,9 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+from sklearn.decomposition import PCA
 import tensorflow as tf
+import joblib
 from tensorflow.keras.models import load_model
 import os
 
@@ -28,40 +30,61 @@ Use CNN for classification
 '''
 #path direction---------------------------------------------------------
 current_directory  = os.path.dirname(__file__)
-dataset_path = os.path.join(current_directory, '..', '..', 'dataset')
-model_path = os.path.join(current_directory, 'model', 'CNNfull.h5')
-df8 = pd.read_csv(os.path.join(dataset_path, 'filtered_df.csv'))
+dataset_path = os.path.join(current_directory, '..', '..', '..', 'datasets')
+model_path = os.path.join(current_directory, '..', 'model', 'CNN.h5')
+pca_path = os.path.join(current_directory, '..', 'model', 'pca_cnn.pkl')
+
+df8 = pd.read_csv(os.path.join(dataset_path, 'IIoT_formatted.csv'))
 cnt = df8['label'].value_counts()
 print(cnt)
 
-
-def preprocess_data_CNN(df):
+def preprocess_data_CNN(df, n_components=0.95):
     X = df.drop(columns=['label'])
     y = df['label']
 
-    # Convert boolean columns to int
+    # Converting boolean to int
     for column in X.columns:
         if X[column].dtype == bool:
             X[column] = X[column].astype(int)
 
-    # Standardize features
+    # Check for infinite values
+    '''
+    Identify Columns with Infinite Values ->Replace Infinite Values -> Handle NaN Values -> Data Scaling
+    '''
+    inf_columns = X.columns.to_series()[np.isinf(X).any()]
+    print("Columns with infinite values:", inf_columns)
+
+    # Replace inf and -inf with NaN across the DataFrame
+    X.replace([np.inf, -np.inf], np.nan, inplace=True)
+    # Fill NaN values with the mean of each column
+    for column in X.select_dtypes(include=[np.number]).columns:
+        X[column] = X[column].fillna(X[column].mean())
+
+    #Data scaling
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
-    # Encode labels
+    # Applying PCA
+    pca = PCA(n_components=n_components)
+    X_pca = pca.fit_transform(X_scaled)
+    print(f'PCA reduced the dimensionality to: {X_pca.shape[1]} features')
+
+    joblib.dump(pca, pca_path)
+
     label_encoder = LabelEncoder()
     y = label_encoder.fit_transform(y)
     print('label number', label_encoder.classes_)
 
-    # Split data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_pca, y, test_size=0.2, random_state=42)
     print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)  
 
-    # Reshape Data for Conv1D
-    X_train_reshaped = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
-    X_test_reshaped = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
-    
-    return X_train_reshaped, X_test_reshaped, y_train, y_test, label_encoder.classes_
+    # Reshaping the input for cnn
+    X_train = X_train.reshape((X_train.shape[0],  X_train.shape[1], 1))
+    X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
+
+    print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+
+    return X_train, X_test, y_train, y_test, label_encoder.classes_
 
 def CNN_model(X_train, X_test, y_train, y_test, epochs=8, batch_size=128):
     # Build and compile model

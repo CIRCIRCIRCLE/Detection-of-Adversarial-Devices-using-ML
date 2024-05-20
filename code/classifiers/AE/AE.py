@@ -62,14 +62,24 @@ def load_and_preprocess_data(datapath):
     # df = pd.read_csv(os.path.join(dataset_path, 'filtered_df.csv'))
     df = pd.read_csv(datapath)
     
+    # Replace inf and -inf with NaN across the DataFrame
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+
     # Convert booleans to integers
     bool_cols = df.select_dtypes(include='bool').columns
     df[bool_cols] = df[bool_cols].astype(int)
+
+    # Fill NaN values with the mean of each column, ensure only numerical columns are processed
+    numerical_cols = df.select_dtypes(include=[np.number]).columns
+    for column in numerical_cols:
+        if column != 'label':  # Exclude the label column from filling NaNs
+            df[column] = df[column].fillna(df[column].mean())
+
     
-    # Scale numerical features
+    # Scale numerical features, excluding the label column from scaling
     scaler = StandardScaler()
-    numerical_cols = df.select_dtypes(include=['float64', 'int64']).columns
-    df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
+    numerical_features = df[numerical_cols].drop(columns=['label'], errors='ignore')  # use errors='ignore' to handle cases where 'label' is not in numerical_cols
+    df[numerical_features.columns] = scaler.fit_transform(numerical_features)
     
     # Encode the labels
     label_encoder = LabelEncoder()

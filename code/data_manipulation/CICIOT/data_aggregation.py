@@ -14,6 +14,10 @@ Functions:
 '''
 
 def convert_dtype(df):
+    # Drop rows with inf values and replace NaN values with zero
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.dropna(inplace=True)
+
     #adjust data type
     for col, typ in dtypes.items():
         df[col] = df[col].astype(typ)
@@ -38,19 +42,19 @@ def concat_dfs(files, path):
 
 
 current_directory  = os.path.dirname(__file__)   #\code
-path = os.path.join(current_directory, '..', '..', 'CICIoT2023')
+path = os.path.join(current_directory, '..', '..', '..', 'raw_data', )
 
 # Find all CSV files in the dataset directory and sort them
 df_sets = [k for k in os.listdir(path) if k.endswith('.csv')]
 df_sets.sort()
 # Add percent for portion test
-df_sets = df_sets[:int(len(df_sets)*.2)]
+df_sets = df_sets[:int(len(df_sets)*1.0)]
 
 X_columns = [
-    'flow_duration', 'Header_Length', 'Protocol Type', 'Duration','Rate', 'Srate', 'Drate', 'fin_flag_number', 'syn_flag_number',
+    'flow_duration', 'header_length', 'protocol_type', 'duration','rate', 'srate', 'drate', 'fin_flag_number', 'syn_flag_number',
     'rst_flag_number', 'psh_flag_number', 'ack_flag_number','ece_flag_number', 'cwr_flag_number', 'ack_count','syn_count', 'fin_count', 'urg_count', 'rst_count', 
-    'HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 'LLC', 'Tot sum', 'Min',
-    'Max', 'AVG', 'Std', 'Tot size', 'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 'Variance', 'Weight' 
+    'http', 'https', 'dns', 'telnet', 'smtp', 'ssh', 'irc', 'tcp', 'udp', 'dhcp', 'arp', 'icmp', 'ipv', 'llc', 'tot_sum', 'min',
+    'max', 'avg', 'std', 'tot_size', 'iat', 'number', 'magnitue', 'radius', 'covariance', 'variance', 'weight', 'label'
 ]
 y_column = 'label'
 
@@ -64,15 +68,16 @@ dtypes = {
         'Magnitue': np.float32, 'Radius': np.float32, 'Covariance': np.float32, 'Variance': np.float32, 'Weight': np.float32
 }
 
+'''
 important_features =  ['flow_duration', 'duration', 'srate', 'drate', 'syn_flag_number', 
                        'psh_flag_number', 'ack_flag_number', 'ack_count', 'syn_count', 'rst_count', 
                        'header_length', 'https', 'ssh', 'tot_sum', 'min', 'max', 'avg', 'iat', 
-                       'magnitue', 'radius', 'variance', 'weight', 'label']
+                       'magnitue', 'radius', 'variance', 'weight', 'label']'''
 
 
 #concatenate dataframes and save to a pickle file
-df = concat_dfs(df_sets, path)[important_features]
-output_file = os.path.join(current_directory, '..', '..', 'datasets', 'CICIoT2023_test.pkl')
+df = concat_dfs(df_sets, path)[X_columns]
+output_file = os.path.join(current_directory, '..', '..', '..','datasets', 'TON_attack.pkl')
 df.to_pickle(output_file)
 
 #df1 = pd.read_pickle(output_file)

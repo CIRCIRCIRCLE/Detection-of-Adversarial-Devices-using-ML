@@ -4,8 +4,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, f1_score, precision_score, recall_score
-from sklearn.model_selection import train_test_split
-from sklearn.decomposition import PCA
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import joblib
@@ -27,18 +25,22 @@ print('-------------------------------------')
 # Path settings
 current_directory = os.path.dirname(__file__)
 dataset_path = os.path.join(current_directory, '..', '..', '..', 'datasets')
-model_path = os.path.join(current_directory, '..', 'model', 'LSTM.h5')
-pca_path = os.path.join(current_directory, '..', 'model', 'pca_model.pkl')
+model_path = os.path.join(current_directory, '..', 'model', 'CNN.h5')
+pca_path = os.path.join(current_directory, '..', 'model', 'pca_cnn.pkl')
 
-# Load dataset
+# Load new dataset
+new_dataset_path = os.path.join(dataset_path, 'CIC_formatted.csv')
 try:
-    df8 = pd.read_csv(os.path.join(dataset_path, 'IIoT_formatted.csv'))
+    df_new = pd.read_csv(new_dataset_path)
 except FileNotFoundError as e:
-    print(f"Dataset not found: {e}")
+    print(f"New dataset not found: {e}")
     raise
 
-# Preprocessing function
-def preprocess_data_LSTM(df, n_components=0.95):
+# Load PCA model
+pca = joblib.load(pca_path)
+
+# Preprocessing function for new dataset
+def preprocess_data_LSTM(df, pca):
     X = df.drop(columns=['label'])
     y = df['label']
 
@@ -62,63 +64,40 @@ def preprocess_data_LSTM(df, n_components=0.95):
     X_scaled = scaler.fit_transform(X)
 
     # Applying PCA
-    pca = PCA(n_components=n_components)
-    X_pca = pca.fit_transform(X_scaled)
-    print(f'PCA reduced the dimensionality to: {X_pca.shape[1]} features')
-
-    # Save the PCA model
-    joblib.dump(pca, pca_path)
+    X_pca = pca.transform(X_scaled)
+    print(f'PCA transformed the dimensionality to: {X_pca.shape[1]} features')
 
     label_encoder = LabelEncoder()
     y = label_encoder.fit_transform(y)
     print('label number', label_encoder.classes_)
 
-    X_train, X_test, y_train, y_test = train_test_split(X_pca, y, test_size=0.2, random_state=42)
-    print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
-
     # Reshaping the input for LSTM
-    X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))
-    X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))
+    X_pca = X_pca.reshape((X_pca.shape[0], 1, X_pca.shape[1]))
 
-    print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+    print(X_pca.shape, y.shape)
 
-    return X_train, X_test, y_train, y_test, label_encoder.classes_
+    return X_pca, y, label_encoder.classes_
 
-# LSTM model function
-def LSTM_model(X_train, X_test, y_train, y_test, epochs=8, batch_size=128):
-    model = tf.keras.Sequential([
-        tf.keras.layers.LSTM(units=50, return_sequences=False, input_shape=(X_train.shape[1], X_train.shape[2])),
-        tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(50, activation='relu'),
-        tf.keras.layers.Dense(len(set(y_train)), activation='softmax')
-    ])
+# Preprocess new dataset
+X_new, y_new, class_labels = preprocess_data_LSTM(df_new, pca)
 
-    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-    model.summary()
-    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.05)
-
-    return model
-
-# Preprocess data and train the model
-X_train, X_test, y_train, y_test, class_labels = preprocess_data_LSTM(df8)
-model = LSTM_model(X_train, X_test, y_train, y_test)
-model.save(model_path)
-
-# Load the model and evaluate
+# Load trained model
 model = load_model(model_path)
-y_pred_prob = model.predict(X_test)
+
+# Evaluate model on new dataset
+y_pred_prob = model.predict(X_new)
 y_pred = np.argmax(y_pred_prob, axis=1)
-report = classification_report(y_test, y_pred)
+report = classification_report(y_new, y_pred)
 print(report)
 
-accuracy = accuracy_score(y_test, y_pred)
-precision = precision_score(y_test, y_pred, average='macro')
-recall = recall_score(y_test, y_pred, average='macro')
-f1 = f1_score(y_test, y_pred, average='macro')
+accuracy = accuracy_score(y_new, y_pred)
+precision = precision_score(y_new, y_pred, average='macro')
+recall = recall_score(y_new, y_pred, average='macro')
+f1 = f1_score(y_new, y_pred, average='macro')
 print(f'Accuracy: {accuracy}, Precision: {precision}, Recall: {recall}, F1 Score: {f1}')
 
 # Generate confusion matrix
-cm = confusion_matrix(y_test, y_pred)
+cm = confusion_matrix(y_new, y_pred)
 
 # Plotting the confusion matrix
 fig, ax = plt.subplots(figsize=(10, 8))
@@ -127,5 +106,5 @@ sns.heatmap(cm, annot=True, fmt='d', ax=ax, cmap='Blues',
 plt.title('Confusion Matrix')
 plt.ylabel('Actual Labels')
 plt.xlabel('Predicted Labels')
-plt.savefig('CMLSTM.png')
+plt.savefig('CMLSTM_new.png')
 plt.show()

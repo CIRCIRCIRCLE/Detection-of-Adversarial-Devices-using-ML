@@ -1,10 +1,10 @@
 {
     "classifier_type": "CNN",
     "gpu": "-1",
-    "encoding_dim": 30,
-    "dataset_path": "../../datasets/filtered_df.csv",
-    "AEEpochs": 1,
-    "ClassifierEpochs": 1,
-    "batch_size": 32
+    "encoding_dim": 20,
+    "dataset_path": "../../../datasets/CICdf8.csv",
+    "AEEpochs": 3,
+    "ClassifierEpochs": 3,
+    "batch_size": 128
   }
   

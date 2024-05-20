@@ -1,0 +1,28 @@
+2024-05-09 19:14:53,112 - INFO - Starting the application.
+2024-05-09 19:14:53,249 - INFO - GPU is successfully loaded on GPU: -1
+2024-05-09 19:14:53,249 - INFO - Loaded configuration and initialized GPU settings.
+2024-05-09 19:15:02,983 - INFO - Data loaded and preprocessed successfully.
+2024-05-09 19:23:44,985 - INFO - Total number of features: 47
+2024-05-09 19:23:44,986 - INFO - Feature importance ranking: [13 14  8 29 30 32  7 45 33 15 10 22  6 17 28 42  3  5 27  9 35 31 11 12
+ 44 16 19  2 39 43  0 46 38 25 37 18 21 23 41  4 26 24 20 36 34 40  1]
+2024-05-09 19:37:51,822 - INFO - Choosed Classifier:CNN  Selected Features: 20
+2024-05-09 19:37:51,823 - INFO - Classification report:
+              precision    recall  f1-score   support
+
+      Benign       0.81      0.97      0.88     18815
+        DDoS       1.00      1.00      1.00    175474
+         DoS       0.99      1.00      1.00    138932
+       Mirai       1.00      0.99      1.00     45272
+    Spoofing       0.87      0.51      0.64      8418
+
+    accuracy                           0.98    386911
+   macro avg       0.93      0.89      0.90    386911
+weighted avg       0.98      0.98      0.98    386911
+
+2024-05-09 19:37:52,231 - INFO - Accuracy: 0.9839446280927655, Precision: 0.9349460378788856, Recall: 0.892007788279917, F1 Score: 0.9025627467486828
+2024-05-09 19:37:52,281 - INFO - Confusion Matrix:
+[[ 18190      7     12      0    606]
+ [     9 174996    455      6      8]
+ [     9    624 138263     30      6]
+ [    34     33    212  44980     13]
+ [  4114      9     17      8   4270]]
