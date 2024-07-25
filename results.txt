@@ -1,0 +1,25 @@
+GAS p = 1000
+2024-07-16 19:33:58,693 [MainThread] [INFO ]  Test time 9.88s, Test loss: 0.01, Test accuracy: 75.62%
+2024-07-16 19:33:58,698 [MainThread] [INFO ]  Model saved at /home/uceehow/Security0054/FL/byzantine-gas/saved_models/_global_model_r_9.pth
+2024-07-16 19:33:58,698 [MainThread] [INFO ]  Accuracies: [74.5116, 72.7889, 73.7864, 65.3834, 72.8046, 75.6616, 66.0537, 75.5887, 76.116, 75.616]
+
+
+Gas p =100
+2024-07-16 19:37:33,033 [MainThread] [INFO ]  Test time 10.26s, Test loss: 0.01, Test accuracy: 75.88%
+2024-07-16 19:37:33,040 [MainThread] [INFO ]  Model saved at /home/uceehow/Security0054/FL/byzantine-gas/saved_models/_global_model_r_9.pth
+2024-07-16 19:37:33,041 [MainThread] [INFO ]  Accuracies: [74.9861, 75.7385, 75.4076, 74.8809, 75.7261, 74.735, 74.9196, 74.9017, 73.8185, 75.8846]
+
+Gas p = 50
+2024-07-16 19:48:52,266 [MainThread] [INFO ]  Test time 10.39s, Test loss: 0.02, Test accuracy: 73.11%
+2024-07-16 19:48:52,271 [MainThread] [INFO ]  Model saved at /home/uceehow/Security0054/FL/byzantine-gas/saved_models/_global_model_r_9.pth
+2024-07-16 19:48:52,272 [MainThread] [INFO ]  Accuracies: [72.6389, 75.7046, 74.7036, 75.5794, 73.4371, 75.9382, 73.3397, 75.8153, 75.1366, 73.1058]
+
+Gas p = 10
+2024-07-16 19:41:15,489 [MainThread] [INFO ]  Test time 9.98s, Test loss: 0.01, Test accuracy: 76.02%
+2024-07-16 19:41:15,495 [MainThread] [INFO ]  Model saved at /home/uceehow/Security0054/FL/byzantine-gas/saved_models/_global_model_r_9.pth
+2024-07-16 19:41:15,495 [MainThread] [INFO ]  Accuracies: [71.2672, 74.3563, 75.0948, 73.0364, 63.0165, 72.5074, 72.5678, 72.7863, 73.0249, 76.0153]
+
+no gas:
+2024-07-16 19:54:25,658 [MainThread] [INFO ]  Test time 10.11s, Test loss: 0.01, Test accuracy: 76.08%
+2024-07-16 19:54:25,663 [MainThread] [INFO ]  Model saved at /home/uceehow/Security0054/FL/byzantine-gas/saved_models/_global_model_r_9.pth
+2024-07-16 19:54:25,664 [MainThread] [INFO ]  Accuracies: [71.7653, 75.3301, 72.3171, 72.9309, 75.3114, 64.0175, 72.6693, 73.2534, 75.9503, 76.0812]
