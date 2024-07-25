@@ -1,0 +1,66 @@
+2024-07-16 19:31:20,529 [MainThread] [INFO ]  Configurations: {'task_id': '', 'data': {'root': './datasets', 'dataset': 'custom', 'split_type': 'dir', 'min_size': 10, 'data_amount': 0.05, 'iid_fraction': 0.1, 'user': False, 'train_test_split': 0.9, 'class_per_client': 1, 'num_of_clients': 160, 'alpha': 0.5, 'weights': None}, 'model': 'custom', 'test_mode': 'test_in_server', 'test_method': 'average', 'server': {'track': False, 'rounds': 10, 'clients_per_round': 10, 'test_every': 1, 'save_model_every': 10, 'save_model_path': '', 'batch_size': 32, 'test_all': False, 'random_selection': True, 'aggregation_stragtegy': 'FedAvg', 'aggregation_content': 'all', 'use_gas': True, 'gas_p': 1000, 'base_agg': 'bulyan'}, 'client': {'track': False, 'batch_size': 32, 'test_batch_size': 5, 'local_epoch': 1, 'optimizer': {'type': 'Adam', 'lr': 0.001, 'momentum': 0.9, 'weight_decay': 0}, 'seed': 0, 'local_test': False}, 'gpu': 1, 'distributed': {'backend': 'nccl', 'init_method': '', 'world_size': 0, 'rank': 0, 'local_rank': 0}, 'tracking': {'database': '', 'log_file': '', 'log_level': 'INFO', 'metric_file': '', 'save_every': 1}, 'resource_heterogeneous': {'simulate': False, 'hetero_type': 'real', 'level': 3, 'sleep_group_num': 1000, 'total_time': 1000, 'fraction': 1, 'grouping_strategy': 'greedy', 'initial_default_time': 5, 'default_time_momentum': 0.2}, 'seed': 0, 'attacker': {'byz_ratio': 0.2, 'lie_z': 1.5}, 'is_distributed': False, 'device': 0}
+2024-07-16 19:31:20,554 [MainThread] [INFO ]  Clients in total: 160
+2024-07-16 19:31:20,556 [MainThread] [INFO ]  
+-------- round 0 --------
+2024-07-16 19:31:20,556 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:31:26,481 [MainThread] [INFO ]  Server train time: 5.923988580703735
+2024-07-16 19:31:26,481 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:31:36,337 [MainThread] [INFO ]  Test time 9.86s, Test loss: 0.01, Test accuracy: 74.51%
+2024-07-16 19:31:36,338 [MainThread] [INFO ]  
+-------- round 1 --------
+2024-07-16 19:31:36,338 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:31:42,529 [MainThread] [INFO ]  Server train time: 6.189965009689331
+2024-07-16 19:31:42,529 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:31:52,387 [MainThread] [INFO ]  Test time 9.86s, Test loss: 0.01, Test accuracy: 72.79%
+2024-07-16 19:31:52,388 [MainThread] [INFO ]  
+-------- round 2 --------
+2024-07-16 19:31:52,388 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:31:56,912 [MainThread] [INFO ]  Server train time: 4.522902011871338
+2024-07-16 19:31:56,912 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:32:06,735 [MainThread] [INFO ]  Test time 9.82s, Test loss: 0.01, Test accuracy: 73.79%
+2024-07-16 19:32:06,736 [MainThread] [INFO ]  
+-------- round 3 --------
+2024-07-16 19:32:06,737 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:32:14,000 [MainThread] [INFO ]  Server train time: 7.262799263000488
+2024-07-16 19:32:14,000 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:32:23,859 [MainThread] [INFO ]  Test time 9.86s, Test loss: 0.02, Test accuracy: 65.38%
+2024-07-16 19:32:23,860 [MainThread] [INFO ]  
+-------- round 4 --------
+2024-07-16 19:32:23,860 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:32:30,267 [MainThread] [INFO ]  Server train time: 6.4068381786346436
+2024-07-16 19:32:30,268 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:32:40,169 [MainThread] [INFO ]  Test time 9.90s, Test loss: 0.02, Test accuracy: 72.80%
+2024-07-16 19:32:40,169 [MainThread] [INFO ]  
+-------- round 5 --------
+2024-07-16 19:32:40,169 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:32:45,660 [MainThread] [INFO ]  Server train time: 5.489676475524902
+2024-07-16 19:32:45,660 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:32:55,690 [MainThread] [INFO ]  Test time 10.03s, Test loss: 0.01, Test accuracy: 75.66%
+2024-07-16 19:32:55,691 [MainThread] [INFO ]  
+-------- round 6 --------
+2024-07-16 19:32:55,691 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:33:00,238 [MainThread] [INFO ]  Server train time: 4.5464088916778564
+2024-07-16 19:33:00,239 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:33:10,249 [MainThread] [INFO ]  Test time 10.01s, Test loss: 0.01, Test accuracy: 66.05%
+2024-07-16 19:33:10,250 [MainThread] [INFO ]  
+-------- round 7 --------
+2024-07-16 19:33:10,250 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:33:17,327 [MainThread] [INFO ]  Server train time: 7.076179504394531
+2024-07-16 19:33:17,328 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:33:27,393 [MainThread] [INFO ]  Test time 10.07s, Test loss: 0.01, Test accuracy: 75.59%
+2024-07-16 19:33:27,394 [MainThread] [INFO ]  
+-------- round 8 --------
+2024-07-16 19:33:27,394 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:33:33,626 [MainThread] [INFO ]  Server train time: 6.230802774429321
+2024-07-16 19:33:33,626 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:33:43,501 [MainThread] [INFO ]  Test time 9.87s, Test loss: 0.01, Test accuracy: 76.12%
+2024-07-16 19:33:43,501 [MainThread] [INFO ]  
+-------- round 9 --------
+2024-07-16 19:33:43,502 [MainThread] [INFO ]  --- start training ---
+2024-07-16 19:33:48,813 [MainThread] [INFO ]  Server train time: 5.310456991195679
+2024-07-16 19:33:48,813 [MainThread] [INFO ]  --- start testing ---
+2024-07-16 19:33:58,693 [MainThread] [INFO ]  Test time 9.88s, Test loss: 0.01, Test accuracy: 75.62%
+2024-07-16 19:33:58,698 [MainThread] [INFO ]  Model saved at /home/uceehow/Security0054/FL/byzantine-gas/saved_models/_global_model_r_9.pth
+2024-07-16 19:33:58,698 [MainThread] [INFO ]  Accuracies: [74.5116, 72.7889, 73.7864, 65.3834, 72.8046, 75.6616, 66.0537, 75.5887, 76.116, 75.616]
+2024-07-16 19:33:58,698 [MainThread] [INFO ]  Cumulative training time: [15.78, 31.83, 46.18, 63.3, 79.61, 95.14, 109.69, 126.84, 142.95, 158.14]
+2024-07-16 19:33:58,698 [MainThread] [INFO ]  Total training time 158.1s
