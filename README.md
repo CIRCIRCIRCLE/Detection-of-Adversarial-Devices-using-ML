@@ -1,23 +1,36 @@
 # Detection-of-Adversarial-Devices-using-ML
 
-## 1. Dataset: 
-[CICIoT dataset 2023](https://www.unb.ca/cic/datasets/iotdataset-2023.html)   
- - __originnal traffic:__ in .pcap files, split the data using TCPDump into multiple files(2GB each), Mergecap can be used to merge the data.   
- - __formatted data:__ extracted from .pcap files into .csv files. All 169 .csv files refer to a combined and shuffled dataset including all attacks. The attacks are identified by the ‘label’ feature.
+The project contains several steps:
 
+1. Datasets: Raw data obtained from CICIoT2023, Edge-IIoT, TON-IoT and IoT23. The data are cleaned and formatted using scripts from pcap2csv folder.   
 
-## 2. __Preprocessing:__
-- __Data Aggregation:__ `data_aggregation.py` The original size is over 15GB, change the data type(from float64 to ...), keep the 22 important features, aggregate the whole dataset into one .pkl file(CICIoT2023.pkl).   
--  __Grouping:__  `data_group.py`  
-  - sample data from CICIoT2023.pkl, choose a percentage with the balanced class
-  - Define Attack Groups:  attack, category and subcategory labels
-    - 2 classes: Benign or Malicious  
-    - 8 classes: Benign, DoS, DDoS, Recon, Mirai, Spoofing, Web, BruteForce
-    - 34 classes: subgroups of the above 8 classes
-   
-## 3. __Classifiers:__  
-### 3.1 Random Forest
-- Default Random Forest: n_estimators=100    
-- Evaluation Metrics: Accuracy, Precision, Recall, F1-score
-### 3.2 DNN
-### 3.3 NLP methods maybe.
+2. Intrusion Detection System(IDS) is set up through ML/DL models to do the classification task. Models include CNN, LSTM, CNN+LSTM, LSTM+CNN. Feature engineering includes Auto-Encoder and PCA.    
+  
+```
+# If you want to test the trained model, for example: 
+cd  models/classifiers/Generalization/
+python test_lstm.py
+
+# if you want to train the model, PCA for example:
+cd  models/classifiers/PCA/
+python LSTM_CNN.py
+```
+
+3. Adaptive Gradient Dimension Splitting with Federated Learning       
+The proposed method is evaluated using both cyber-attack datasets and standard benchmarks (MNIST and CIFAR-10). It builds upon the [GAS algorithm](https://github.com/YuchenLiu-a/byzantine-gas), incorporating dimensionality reduction through PCA followed by K-means clustering. Mahalanobis distance is then employed for agnostic filtering of the clustered data. 
+
+The general overview of the algorithm is shown below:
+<img src="fig/agds.png" alt="FLtest" width="700">
+
+If you want to test with the IDS dataset, the cleaned and formatted can be obtained here: [IDS_Dataset](https://drive.google.com/drive/folders/1iqukGHlxjrnkI5ssvUDGxEEDrbOhz5PV?usp=sharing
+)
+
+```
+cd AGDS
+python main.py
+
+# for baseline test
+cd AGDS/baselines
+python cifar10.py
+python mnist.py
+```

@@ -1,3 +1,1 @@
-This file should contain the following files:
-1. CICIoT2023.pkl  ->run data_aggregation.py
-2. df2.csv, df8.csv, df34.csv ->run data group.py
+The cleaned and formatted datasets are provided: https://drive.google.com/drive/folders/1iqukGHlxjrnkI5ssvUDGxEEDrbOhz5PV?usp=sharing
